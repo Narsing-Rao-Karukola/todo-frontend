@@ -1,25 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
+import NavBar from "./components/NavBar";
+import { Home } from "./components/Home";
+import { TodoList } from "./components/TodoList";
+import Sso from "./components/SSO";
+import SignUp from "./components/SSO/SignUp";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="todo-list/*" element={<TodoList />} />
+          <Route path="sso">
+            <Route index={true} element={<Sso />}></Route>
+            <Route path="sign-up" element={<SignUp />} />
+          </Route>
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
