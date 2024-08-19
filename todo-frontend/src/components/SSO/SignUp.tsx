@@ -1,8 +1,12 @@
 import { Box, Typography, TextField, Button } from "@mui/material";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { userIdPatternValidation } from "../../utils/validations";
+import { useSignUpMutation } from "../../lib/service/ssoService";
+import { useNavigate } from "react-router-dom";
 
 function SignUp() {
+  const navigate = useNavigate();
+  const [signUp] = useSignUpMutation();
   const [data, setData] = useState<{
     userId?: string;
     userName?: string;
@@ -45,25 +49,26 @@ function SignUp() {
     });
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
-    console.log("hey");
-    // throw new Error("Function not implemented.");
+  function handleSubmit(): void {
+    signUp({
+      username: data?.userId || "",
+      password: data?.password || "",
+    }).then(() => {
+      navigate("/sso/sign-up");
+    });
   }
+
   return (
     <Box p={2}>
       <Typography variant="h4">Sign Up</Typography>
       <Box
-        component="form"
         p={2}
         sx={{
-          "& > :not(style)": { m: 1, width: "25ch" },
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          gap: 2,
         }}
-        noValidate
-        autoComplete="off"
-        onSubmit={handleSubmit}
       >
         <TextField
           required
@@ -107,6 +112,7 @@ function SignUp() {
         <Button
           type="submit"
           variant="contained"
+          onClick={() => handleSubmit()}
           disabled={
             data?.userName === "" || data?.password === "" || error?.userName
           }

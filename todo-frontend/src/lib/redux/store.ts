@@ -1,5 +1,6 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { apiSlice } from "./apiSlice";
+import ssoReducer from "./ssoSlice";
 import storage from "redux-persist/lib/storage";
 import {
   FLUSH,
@@ -12,9 +13,12 @@ import {
   REHYDRATE,
 } from "redux-persist";
 import { setupListeners } from "@reduxjs/toolkit/query";
+import todoReducer from "./todoSlice";
 
 const rootReducer = combineReducers({
   [apiSlice.reducerPath]: apiSlice.reducer,
+  sso: ssoReducer,
+  todo: todoReducer,
 });
 
 const middleware = [apiSlice.middleware];

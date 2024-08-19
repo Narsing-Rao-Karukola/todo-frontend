@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Storage } from 'redux-persist';
+import { Storage } from "redux-persist";
 
 function getLocalValue(key: string): string | null {
   const value = localStorage.getItem(key);
@@ -31,7 +31,19 @@ const reduxStorage: Storage = {
 };
 
 const LOCAL_KEYS = {
-  ACCESS_TOKEN: 'accessToken',
+  ACCESS_TOKEN: "accessToken",
 };
 
-export { LOCAL_KEYS, reduxStorage, getLocalValue, setLocalValue, removeLocalItem };
+const emptyCache = () => {
+  localStorage.clear();
+  sessionStorage.clear();
+};
+
+export {
+  LOCAL_KEYS,
+  reduxStorage,
+  getLocalValue,
+  setLocalValue,
+  removeLocalItem,
+  emptyCache,
+};

@@ -1,36 +1,33 @@
-import React, { useState } from "react";
+import { Button, Checkbox, Typography } from "@mui/material";
+import { TodoType } from "../../utils/types";
 
-export function Todo() {
-  const [tasks, setTasks] = useState<
-    { id: number; text: string; completed: boolean }[]
-  >([
-    {
-      id: 1,
-      text: "Doctor Appointment",
-      completed: true,
-    },
-    {
-      id: 2,
-      text: "Meeting at School",
-      completed: false,
-    },
-  ]);
-  const [text, setText] = useState("");
+export function Todo(props: {
+  data: TodoType;
+  updateHandler: any;
+  deleteHandler: (id:number) => void;
+}) {
+  const { data } = props;
 
-  function addTodo(todo: string) {
-    setTasks((pre) => [
-      ...pre,
-      {
-        id: Date.now(),
-        text,
-        completed: false,
-      },
-    ]);
-  }
+  function handleDone(): void {}
 
-  function deleteTask(id: number) {
-    setTasks(tasks.filter((task) => task.id !== id));
-  }
-
-  return <div>Todo</div>;
+  return (
+    <>
+      <Checkbox onClick={() => handleDone()} checked={data.completed}  />
+      <Typography>{data.title}</Typography>
+      {/* <Button
+                  onClick={() => handleEdit(todo.id)}
+                  variant="contained"
+                  className={classes.listButtons}
+                >
+                  Edit
+                </Button> */}
+      <Button
+        onClick={() => props?.deleteHandler(data.id)}
+        color="secondary"
+        variant="contained"
+      >
+        delete
+      </Button>
+    </>
+  );
 }

@@ -1,4 +1,4 @@
-import { createApi } from "@reduxjs/toolkit/query";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { axiosBaseQuery } from "../service/axiosBaseQuery";
 
 export const apiSlice = createApi({
@@ -7,3 +7,4 @@ export const apiSlice = createApi({
   endpoints: () => ({}),
   tagTypes: [""],
 });
+
