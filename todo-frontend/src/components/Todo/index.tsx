@@ -1,6 +1,7 @@
-import { Button, Checkbox, Typography } from "@mui/material";
+import { Checkbox, IconButton, Stack, Typography } from "@mui/material";
 import { TodoType } from "../../utils/types";
-
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 export function Todo(props: {
   data: TodoType;
   updateHandler: (data: TodoType) => void;
@@ -10,21 +11,27 @@ export function Todo(props: {
   const { data } = props;
   return (
     <>
-      <Checkbox
-        onClick={() => props?.updateTodoStatus(data)}
-        checked={data.completed}
-      />
-      <Typography>{data.title}</Typography>
-      <Button onClick={() => props?.updateHandler(data)} variant="contained">
-        {"Edit"}
-      </Button>
-      <Button
-        onClick={() => props?.deleteHandler(data.id)}
-        color="secondary"
-        variant="contained"
-      >
-        {"Delete"}
-      </Button>
+      <Stack direction={"row"} alignItems={"center"}>
+        <Checkbox
+          onClick={() => props?.updateTodoStatus(data)}
+          checked={data.completed}
+        />
+        <Typography
+          sx={{ textDecoration: `${data.completed ? "line-through" : ""}` }}
+        >
+          {data.title}
+        </Typography>
+      </Stack>
+      <Stack direction={"row"} alignItems={"center"}>
+        {!data.completed && (
+          <IconButton onClick={() => props?.updateHandler(data)}>
+            <EditOutlinedIcon />
+          </IconButton>
+        )}
+        <IconButton onClick={() => props?.deleteHandler(data.id)}>
+          <DeleteIcon />
+        </IconButton>
+      </Stack>
     </>
   );
 }

@@ -1,11 +1,4 @@
-import {
-  Box,
-  IconButton,
-  List,
-  ListItem,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Card, IconButton, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { todoListSelector } from "../lib/service/selectors";
@@ -46,9 +39,8 @@ export function TodoList() {
   }
 
   function updateTitle(): void {
-    const d = { id: editTodoId, title: newTodo };
-    console.log("d", d);
-    updateTodoTitle(d).then((res) => {
+    updateTodoTitle({ id: editTodoId, title: newTodo }).then((res) => {
+      setNewTodo("");
       setEditModeTodo(false);
       refetch();
     });
@@ -69,6 +61,7 @@ export function TodoList() {
   function updateStatus(data: TodoType): void {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     updateTodoStatus({ ...data, completed: !data?.completed }).then((res) => {
+      setNewTodo("");
       refetch();
     });
   }
@@ -86,9 +79,11 @@ export function TodoList() {
             sx={{ width: "50%", marginBottom: 3, marginRight: 4 }}
           />
           {!editMode ? (
-            <IconButton onClick={addTodo}>
-              <AddIcon />
-            </IconButton>
+            newTodo !== "" && (
+              <IconButton onClick={addTodo}>
+                <AddIcon />
+              </IconButton>
+            )
           ) : (
             <IconButton onClick={updateTitle}>
               <CheckOutlinedIcon />
@@ -96,16 +91,19 @@ export function TodoList() {
           )}
         </Box>
 
-        <List>
-          {todoList?.map((todo, index) => (
-            <ListItem
+        {todoList && todoList?.length > 0 ? (
+          todoList?.map((todo, index) => (
+            <Card
               key={index}
               sx={{
                 width: "80%",
                 margin: "auto",
                 display: "flex",
                 justifyContent: "space-between",
+                alignContent: "center",
+                alignItems: "center",
                 border: "1px solid light-gray",
+                my: 1,
               }}
             >
               <Todo
@@ -114,9 +112,11 @@ export function TodoList() {
                 deleteHandler={deleteSpecificId}
                 updateTodoStatus={updateStatus}
               />
-            </ListItem>
-          ))}
-        </List>
+            </Card>
+          ))
+        ) : (
+          <Typography>{"No Todo's found."}</Typography>
+        )}
       </Box>
     </Box>
   );
