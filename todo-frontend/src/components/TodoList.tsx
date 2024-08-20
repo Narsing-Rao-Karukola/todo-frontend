@@ -3,7 +3,6 @@ import {
   IconButton,
   List,
   ListItem,
-  Stack,
   TextField,
   Typography,
 } from "@mui/material";
@@ -14,19 +13,25 @@ import {
   useCreateTodoMutation,
   useDeleteTodoMutation,
   useGetTodosQuery,
-  useUpdateTodoMutation,
+  useUpdateTodoStatusMutation,
+  useUpdateTodoTitleMutation,
 } from "../lib/service/todoService";
 import { Todo } from "./Todo";
 import AddIcon from "@mui/icons-material/Add";
+import { TodoType } from "../utils/types";
+import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 
 export function TodoList() {
-  const { data, isError, error, refetch } = useGetTodosQuery({});
+  const { refetch } = useGetTodosQuery({});
   const [createTodo] = useCreateTodoMutation();
-  const [updateTodo] = useUpdateTodoMutation();
+  const [updateTodoStatus] = useUpdateTodoStatusMutation();
+  const [updateTodoTitle] = useUpdateTodoTitleMutation();
   const [deleteTodo] = useDeleteTodoMutation();
 
   const todoList = useSelector(todoListSelector);
   const [newTodo, setNewTodo] = useState("");
+  const [editTodoId, setEditTodoId] = useState(0);
+  const [editMode, setEditModeTodo] = useState(false);
 
   const handleInputChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -34,15 +39,36 @@ export function TodoList() {
     setNewTodo(event.target.value);
   };
   function addTodo(): void {
-    // console.log("newTodo", newTodo, todoList);
     createTodo({ completed: false, title: newTodo }).then((res) => {
       setNewTodo("");
       refetch();
     });
   }
 
+  function updateTitle(): void {
+    const d = { id: editTodoId, title: newTodo };
+    console.log("d", d);
+    updateTodoTitle(d).then((res) => {
+      setEditModeTodo(false);
+      refetch();
+    });
+  }
+
+  function updateSpecificTodo(data: TodoType) {
+    setNewTodo(data?.title);
+    setEditModeTodo(true);
+    setEditTodoId(data?.id);
+  }
+
   function deleteSpecificId(id: number) {
     deleteTodo({ id: id }).then((res) => {
+      refetch();
+    });
+  }
+
+  function updateStatus(data: TodoType): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    updateTodoStatus({ ...data, completed: !data?.completed }).then((res) => {
       refetch();
     });
   }
@@ -59,26 +85,17 @@ export function TodoList() {
             label="Add a new todo"
             sx={{ width: "50%", marginBottom: 3, marginRight: 4 }}
           />
-          <IconButton onClick={addTodo}>
-            <AddIcon />
-          </IconButton>
-          {/* <Button
-           
-            variant="contained"
-            sx={{ marginBottom: 3 }}
-          >
-            Add
-          </Button> */}
+          {!editMode ? (
+            <IconButton onClick={addTodo}>
+              <AddIcon />
+            </IconButton>
+          ) : (
+            <IconButton onClick={updateTitle}>
+              <CheckOutlinedIcon />
+            </IconButton>
+          )}
         </Box>
-        {/* {todoList?.map((todo, index) => (
-          <Stack key={index}  direction={"row"} justifyContent={"center"} alignItems={"center"} gap={4}>
-            <Todo
-              data={todo}
-              updateHandler={undefined}
-              deleteHandler={deleteSpecificId}
-            />
-          </Stack>
-        ))} */}
+
         <List>
           {todoList?.map((todo, index) => (
             <ListItem
@@ -93,8 +110,9 @@ export function TodoList() {
             >
               <Todo
                 data={todo}
-                updateHandler={undefined}
+                updateHandler={updateSpecificTodo}
                 deleteHandler={deleteSpecificId}
+                updateTodoStatus={updateStatus}
               />
             </ListItem>
           ))}
@@ -103,5 +121,3 @@ export function TodoList() {
     </Box>
   );
 }
-
-//  default TodoList;
