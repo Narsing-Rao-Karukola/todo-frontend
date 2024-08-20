@@ -1,4 +1,11 @@
-import { Box, Typography, TextField, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Snackbar,
+  SnackbarCloseReason,
+} from "@mui/material";
 import { ChangeEvent, useState } from "react";
 import { userIdPatternValidation } from "../../utils/validations";
 import { useSignUpMutation } from "../../lib/service/ssoService";
@@ -6,25 +13,33 @@ import { useNavigate } from "react-router-dom";
 
 function SignUp() {
   const navigate = useNavigate();
-  const [signUp] = useSignUpMutation();
+  const [signUp, { isSuccess }] = useSignUpMutation();
   const [data, setData] = useState<{
     userId?: string;
-    userName?: string;
     password?: string;
   }>({
     userId: "",
-    userName: "",
     password: "",
   });
   const [error, setError] = useState<{
     userId?: boolean;
-    userName?: boolean;
     password?: boolean;
   }>({
     userId: false,
-    userName: false,
     password: false,
   });
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   function handleChange(
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -39,10 +54,6 @@ function SignUp() {
           ...pre,
           [event?.target.id]: userIdPatternValidation(event?.target?.value),
         };
-      } else if (event?.target.id === "userName") {
-        return {
-          [event?.target.id]: userIdPatternValidation(event?.target?.value),
-        };
       } else {
         return { ...pre };
       }
@@ -53,13 +64,33 @@ function SignUp() {
     signUp({
       username: data?.userId || "",
       password: data?.password || "",
-    }).then(() => {
-      navigate("/sso/sign-up");
+    }).then((res) => {
+      if (res?.error) {
+        const errorRes: { message: string[] | string } = {
+          message: [],
+          ...res?.error,
+        };
+        setOpen(true);
+        setMessage(
+          Array.isArray(errorRes?.message)
+            ? errorRes?.message?.join(",")
+            : errorRes?.message
+        );
+      } else {
+        navigate("/sso");
+      }
     });
   }
 
   return (
     <Box p={2}>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        message={message}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      />
       <Typography variant="h4">Sign Up</Typography>
       <Box
         p={2}
@@ -70,7 +101,7 @@ function SignUp() {
           gap: 2,
         }}
       >
-        <TextField
+        {/* <TextField
           required
           id="userName"
           label="User Name"
@@ -83,7 +114,7 @@ function SignUp() {
               ? "Invalid User Name (Only letters, numbers without spaces)"
               : ""
           }
-        />
+        /> */}
         <TextField
           required
           id="userId"
@@ -114,7 +145,7 @@ function SignUp() {
           variant="contained"
           onClick={() => handleSubmit()}
           disabled={
-            data?.userName === "" || data?.password === "" || error?.userName
+            data?.userId === "" || data?.password === "" || error?.userId
           }
         >
           Create Account

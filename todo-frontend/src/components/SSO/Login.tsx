@@ -1,4 +1,11 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Snackbar,
+  SnackbarCloseReason,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userIdPatternValidation } from "../../utils/validations";
@@ -7,6 +14,19 @@ import { useSignInMutation } from "../../lib/service/ssoService";
 export default function Login() {
   const navigate = useNavigate();
   const [signIn, { isSuccess }] = useSignInMutation();
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   if (isSuccess) {
     navigate("/todo-list");
@@ -42,17 +62,34 @@ export default function Login() {
     }
   }
   function handleSubmit(): void {
-    signIn({ username: data?.userId || "", password: data?.password || "" })
-      .then((res) => {
-        console.log("res", res);
-      })
-      .catch((e) => {
-        console.log("e", e);
-      });
+    signIn({
+      username: data?.userId || "",
+      password: data?.password || "",
+    }).then((res) => {
+      if (res?.error) {
+        setOpen(true);
+        const errorRes: { message: string[] } = {
+          message: [],
+          ...res?.error,
+        };
+        setMessage(
+          Array.isArray(errorRes?.message)
+            ? errorRes?.message?.join(",")
+            : errorRes?.message
+        );
+      }
+    });
   }
 
   return (
     <Box p={2}>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        message={message}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      />
       <Typography variant="h4">Login</Typography>
       <Box
         p={2}
