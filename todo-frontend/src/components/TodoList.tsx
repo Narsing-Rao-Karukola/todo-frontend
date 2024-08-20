@@ -92,28 +92,38 @@ export function TodoList() {
         </Box>
 
         {todoList && todoList?.length > 0 ? (
-          todoList?.map((todo, index) => (
-            <Card
-              key={index}
-              sx={{
-                width: "80%",
-                margin: "auto",
-                display: "flex",
-                justifyContent: "space-between",
-                alignContent: "center",
-                alignItems: "center",
-                border: "1px solid light-gray",
-                my: 1,
-              }}
-            >
-              <Todo
-                data={todo}
-                updateHandler={updateSpecificTodo}
-                deleteHandler={deleteSpecificId}
-                updateTodoStatus={updateStatus}
-              />
-            </Card>
-          ))
+          <Box
+            height={"400px"}
+            sx={{
+              overflowY: "scroll",
+              "::-webkit-scrollbar": {
+                display: "none",
+              },
+            }}
+          >
+            {todoList?.map((todo, index) => (
+              <Card
+                key={index}
+                sx={{
+                  width: "80%",
+                  margin: "auto",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignContent: "center",
+                  alignItems: "center",
+                  border: "1px solid light-gray",
+                  my: 1,
+                }}
+              >
+                <Todo
+                  data={todo}
+                  updateHandler={updateSpecificTodo}
+                  deleteHandler={deleteSpecificId}
+                  updateTodoStatus={updateStatus}
+                />
+              </Card>
+            ))}
+          </Box>
         ) : (
           <Typography>{"No Todo's found."}</Typography>
         )}
