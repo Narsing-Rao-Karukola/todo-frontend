@@ -18,21 +18,21 @@ export const todoService = apiSlice.injectEndpoints({
     updateTodoStatus: build.mutation<any, TodoType>({
       query: ({ id, ...rest }) => ({
         method: "PATCH",
-        url: `/tasks/${id}/status`,
+        url: `/todo/${id}/status`,
         data: { ...rest },
       }),
     }),
-    updateTodoTitle: build.mutation<any, {id:number, title:string}>({
+    updateTodoTitle: build.mutation<any, { id: number; title: string }>({
       query: ({ id, ...rest }) => ({
         method: "PATCH",
-        url: `/tasks/${id}/title`,
+        url: `/todo/${id}/title`,
         data: { ...rest },
       }),
     }),
     deleteTodo: build.mutation<any, { id: number }>({
       query: ({ id }) => ({
         method: "DELETE",
-        url: `/tasks/${id}`,
+        url: `/todo/${id}`,
         data: { id: id },
       }),
     }),

@@ -9,11 +9,11 @@ const endpoints = {
   },
   getAllTodos: {
     method: "GET",
-    url: "/tasks",
+    url: "/todo",
   },
   createTodo: {
     method: "POST",
-    url: "/tasks",
+    url: "/todo",
   },
 };
 
